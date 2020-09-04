@@ -17,7 +17,7 @@
 #![allow(missing_docs)]
 use crate::piet::Color;
 
-use crate::{ArcStr, Env, FontDescriptor, FontFamily, Key};
+use crate::{Env, FontDescriptor, FontFamily, Key};
 
 pub const WINDOW_BACKGROUND_COLOR: Key<Color> = Key::new("window_background_color");
 
@@ -41,7 +41,6 @@ pub const SELECTION_COLOR: Key<Color> = Key::new("selection_color");
 pub const SELECTION_TEXT_COLOR: Key<Color> = Key::new("selection_text_color");
 pub const CURSOR_COLOR: Key<Color> = Key::new("cursor_color");
 
-pub const FONT_NAME: Key<ArcStr> = Key::new("font_name");
 pub const TEXT_SIZE_NORMAL: Key<f64> = Key::new("text_size_normal");
 pub const TEXT_SIZE_LARGE: Key<f64> = Key::new("text_size_large");
 pub const BASIC_WIDGET_HEIGHT: Key<f64> = Key::new("basic_widget_height");
@@ -100,9 +99,6 @@ pub fn init() -> Env {
         .adding(SCROLLBAR_PAD, 2.)
         .adding(SCROLLBAR_RADIUS, 5.)
         .adding(SCROLLBAR_EDGE_WIDTH, 1.)
-        //TODO: we will remove this key, but it needs to exist while we migrate
-        // to use FontDescriptors.
-        .adding(FONT_NAME, "Arial")
         .adding(
             UI_FONT,
             FontDescriptor::new(FontFamily::SYSTEM_UI).with_size(15.0),

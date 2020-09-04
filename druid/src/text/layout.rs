@@ -27,6 +27,17 @@ use crate::{Data, Env, FontDescriptor, KeyOrValue, PaintCtx, RenderContext};
 ///
 /// This wraps an inner layout object, and handles invalidating and rebuilding
 /// it as required.
+///
+/// This object is not valid until the [`rebuild_if_needed`] method has been
+/// called. Additionally, this method must be called anytime the text or
+/// other properties have changed, or if any  items in the [`Env`] that are
+/// referenced in this layout change.
+///
+/// In general, you should just call this method as part of your widget's
+/// `update` method.
+///
+/// [`rebuild_if_needed`]: #method.rebuild_if_needed
+/// [`Env`]: struct.Env.html
 #[derive(Clone)]
 pub struct TextLayout {
     font: KeyOrValue<FontDescriptor>,
@@ -45,7 +56,15 @@ pub struct TextLayout {
 }
 
 impl TextLayout {
-    /// Create a new `UiText` object.
+    /// Create a new `TextLayout` object.
+    ///
+    /// You do not provide the actual text at creation time; instead you pass
+    /// it in when calling [`rebuild_if_needed`].
+    ///
+    /// [`rebuild_if_needed`]: #method.rebuild_if_needed
+    //FIXME: we may change to having this take the text initially, but this
+    //depends on us having some clone-friendly text types.
+    #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         TextLayout {
             font: crate::theme::UI_FONT.into(),
@@ -56,6 +75,16 @@ impl TextLayout {
             cached_text_size: None,
             layout: None,
         }
+    }
+
+    /// Returns `true` if this layout needs to be rebuilt.
+    ///
+    /// This happens (for instance) after style attributes are modified.
+    ///
+    /// This does not account for things like the text changing, handling that
+    /// is the responsibility of the user.
+    pub fn needs_rebuild(&self) -> bool {
+        self.layout.is_none()
     }
 
     /// Set the default text color for this layout.
@@ -204,14 +233,14 @@ impl TextLayout {
     ///  call this method.
     ///
     ///  [`rebuild_if_needed`]: #method.rebuild_if_needed
-    pub fn draw(&mut self, ctx: &mut PaintCtx, point: Point) {
+    pub fn draw(&self, ctx: &mut PaintCtx, point: impl Into<Point>) {
         ctx.draw_text(self.layout.as_ref().unwrap(), point)
     }
 }
 
 impl std::fmt::Debug for TextLayout {
     fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        f.debug_struct("UiText")
+        f.debug_struct("TextLayout")
             .field("font", &self.font)
             .field("text_size_override", &self.text_size_override)
             .field("text_color", &self.text_color)

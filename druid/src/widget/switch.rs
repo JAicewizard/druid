@@ -16,13 +16,10 @@
 
 use std::time::Duration;
 
-use crate::kurbo::{Circle, Point, Shape, Size};
+use crate::kurbo::{Circle, Shape};
 use crate::piet::{LinearGradient, RenderContext, UnitPoint};
-use crate::theme;
-use crate::{
-    ArcStr, BoxConstraints, Env, Event, EventCtx, LayoutCtx, LifeCycle, LifeCycleCtx, PaintCtx,
-    TextLayout, UpdateCtx, Widget,
-};
+use crate::widget::prelude::*;
+use crate::{theme, ArcStr, Point, TextLayout};
 
 const SWITCH_CHANGE_TIME: f64 = 0.2;
 const SWITCH_PADDING: f64 = 3.;
@@ -172,9 +169,16 @@ impl Widget<bool> for Switch {
         }
     }
 
-    fn layout(&mut self, _ctx: &mut LayoutCtx, bc: &BoxConstraints, _: &bool, env: &Env) -> Size {
-        let width = env.get(theme::BORDERED_WIDGET_HEIGHT) * SWITCH_WIDTH_RATIO;
-        bc.constrain(Size::new(width, env.get(theme::BORDERED_WIDGET_HEIGHT)))
+    fn layout(&mut self, ctx: &mut LayoutCtx, bc: &BoxConstraints, _: &bool, env: &Env) -> Size {
+        let text_metrics = self.on_text.layout_metrics();
+        let height = env.get(theme::BORDERED_WIDGET_HEIGHT);
+        let width = height * SWITCH_WIDTH_RATIO;
+
+        let label_y = (height - text_metrics.size.height).max(0.0) / 2.0;
+        let text_bottom_padding = height - (text_metrics.size.height + label_y);
+        let text_baseline_offset = text_metrics.size.height - text_metrics.first_baseline;
+        ctx.set_baseline_offset(text_bottom_padding + text_baseline_offset);
+        bc.constrain(Size::new(width, height))
     }
 
     fn paint(&mut self, ctx: &mut PaintCtx, data: &bool, env: &Env) {

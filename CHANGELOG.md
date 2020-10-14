@@ -45,6 +45,9 @@ You can find its changes [documented below](#060---2020-06-01).
 - `RawLabel` widget displays text `Data`. ([#1252] by [@cmyr])
 - 'Tabs' widget allowing static and dynamic tabbed layouts. ([#1160] by [@rjwittams])
 - `RichText` and `Attribute` types for creating rich text ([#1255] by [@cmyr])
+- `request_timer` can now be called from `LayoutCtx` ([#1278] by [@Majora320])
+- TextBox supports vertical movement ([#1280] by [@cmyr])
+- Widgets can specify a baseline, flex rows can align baselines ([#1295] by [@cmyr])
 
 ### Changed
 
@@ -67,6 +70,7 @@ You can find its changes [documented below](#060---2020-06-01).
 - Window construction: WindowDesc decomposed to PendingWindow and WindowConfig to allow for sub-windows and reconfiguration. ([#1235] by [@rjwittams])
 - `LocalizedString` and `LabelText` use `ArcStr` instead of String ([#1245] by [@cmyr])
 - `LensWrap` widget moved into widget module ([#1251] by [@cmyr])
+- `Delegate::command` now returns `Handled`, not `bool` ([#1298] by [@jneem])
 
 ### Deprecated
 
@@ -98,6 +102,11 @@ You can find its changes [documented below](#060---2020-06-01).
 - Windows: fix crash on resize from incompatible resources ([#1191 by [@raphlinus]])
 - GTK: Related dependencies are now optional, facilitating a pure X11 build. ([#1241] by [@finnerale])
 - `widget::Image` now computes the layout correctly when unbound in one direction. ([#1189] by [@JAicewizard])
+- TextBox doesn't reset position after unfocused. ([#1276] by [@sysint64])
+- Able to select text in multiple TextBoxes at once. ([#1276] by [@sysint64])
+- The scroll bar now shows when the contents of a scrollable area change size. ([#1278] by [@Majora320])
+- Fix `widget::Either` using the wrong paint insets ([#1299] by [@andrewhickman])
+- Improve Windows 7 DXGI compatibility ([#1311] by [@raphlinus])
 
 ### Visual
 
@@ -324,6 +333,7 @@ Last release without a changelog :(
 [@koutoftimer]: https://github.com/koutoftimer
 [@tay64]: https://github.com/tay64
 [@JAicewizard]: https://github.com/JAicewizard
+[@andrewhickman]: https://github.com/andrewhickman
 
 [#599]: https://github.com/linebender/druid/pull/599
 [#611]: https://github.com/linebender/druid/pull/611
@@ -467,7 +477,7 @@ Last release without a changelog :(
 [#1185]: https://github.com/linebender/druid/pull/1185
 [#1191]: https://github.com/linebender/druid/pull/1191
 [#1092]: https://github.com/linebender/druid/pull/1092
-[#1186]: https://github.com/linebender/druid/pull/1186
+[#1189]: https://github.com/linebender/druid/pull/1189
 [#1195]: https://github.com/linebender/druid/pull/1195
 [#1204]: https://github.com/linebender/druid/pull/1204
 [#1205]: https://github.com/linebender/druid/pull/1205
@@ -484,6 +494,13 @@ Last release without a changelog :(
 [#1251]: https://github.com/linebender/druid/pull/1251
 [#1252]: https://github.com/linebender/druid/pull/1252
 [#1255]: https://github.com/linebender/druid/pull/1255
+[#1276]: https://github.com/linebender/druid/pull/1276
+[#1278]: https://github.com/linebender/druid/pull/1278
+[#1280]: https://github.com/linebender/druid/pull/1280
+[#1295]: https://github.com/linebender/druid/pull/1280
+[#1298]: https://github.com/linebender/druid/pull/1298
+[#1299]: https://github.com/linebender/druid/pull/1299
+[#1311]: https://github.com/linebender/druid/pull/1311
 
 [Unreleased]: https://github.com/linebender/druid/compare/v0.6.0...master
 [0.6.0]: https://github.com/linebender/druid/compare/v0.5.0...v0.6.0

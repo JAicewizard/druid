@@ -18,6 +18,23 @@ default = ["gtk"]
 gtk = ["gio", "gdk", "gdk-sys", "glib", "glib-sys", "gtk-sys", "gtk-rs", "gdk-pixbuf"]
 x11 = ["x11rb", "nix", "cairo-sys-rs"]
 
+# passing on all the image features. AVIF is not supported because it does not
+# support decoding, and thats al we use `Image` for.
+png = ["image/png"]
+jpeg = ["image/jpeg"]
+jpeg_rayon = ["image/jpeg_rayon"]
+gif = ["image/gif"]
+bmp = ["image/bmp"]
+ico = ["image/ico"]
+tiff = ["image/tiff"]
+webp = ["image/webp"]
+pnm = ["image/pnm"]
+dds = ["image/dds"]
+tga = ["image/tga"]
+farbfeld = ["image/farbfeld"]
+dxt = ["image/dxt"]
+hdr = ["image/hdr"]
+
 [dependencies]
 # NOTE: When changing the piet or kurbo versions, ensure that
 #       the kurbo version included in piet is compatible with the kurbo version specified here.

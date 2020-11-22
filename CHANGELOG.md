@@ -140,6 +140,7 @@ You can find its changes [documented below](#060---2020-06-01).
 - Specify feature requirements in a standard way. ([#1050] by [@xStrom])
 - Added `event_viewer` example ([#1326] by [@cmyr])
 - Rename `ext_event` to `async_event`. ([#1401] by [@JAicewizard])
+- Add readme. ([#1423] by [@JAicewizard])
 
 ### Maintenance
 
@@ -537,7 +538,9 @@ Last release without a changelog :(
 [#1259]: https://github.com/linebender/druid/pull/1259
 [#1361]: https://github.com/linebender/druid/pull/1361
 [#1371]: https://github.com/linebender/druid/pull/1371
+[#1401]: https://github.com/linebender/druid/pull/1401
 [#1410]: https://github.com/linebender/druid/pull/1410
+[#1423]: https://github.com/linebender/druid/pull/1423
 
 [Unreleased]: https://github.com/linebender/druid/compare/v0.6.0...master
 [0.6.0]: https://github.com/linebender/druid/compare/v0.5.0...v0.6.0

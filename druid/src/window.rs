@@ -91,7 +91,6 @@ impl<T> Window<T> {
 }
 
 impl<T: Data> Window<T> {
-
     /// `true` iff any child requested an animation frame since the last `AnimFrame` event.
     pub(crate) fn wants_animation_frame(&self) -> bool {
         self.root.state().request_anim

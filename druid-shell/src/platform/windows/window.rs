@@ -1316,7 +1316,7 @@ impl WindowBuilder {
             if !self.show_titlebar {
                 dwStyle &= !(WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED);
             }
-            let mut dwExStyle = 0; 
+            let mut dwExStyle = 0;
             if self.present_strategy == PresentStrategy::Flip {
                 dwExStyle |= WS_EX_NOREDIRECTIONBITMAP;
             }

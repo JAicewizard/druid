@@ -98,7 +98,7 @@ pub const SCROLLBAR_EDGE_WIDTH: Key<f64> =
 
 /// An initial theme.
 pub(crate) fn add_to_env(env: Env) -> Env {
-    env.adding(WINDOW_BACKGROUND_COLOR, Color::rgba8(0xff, 0x29, 0x29, 0))
+    env.adding(WINDOW_BACKGROUND_COLOR, Color::rgb8(0x29, 0x29, 0x29))
         .adding(LABEL_COLOR, Color::rgb8(0xf0, 0xf0, 0xea))
         .adding(PLACEHOLDER_COLOR, Color::rgb8(0x80, 0x80, 0x80))
         .adding(PRIMARY_LIGHT, Color::rgb8(0x5c, 0xc4, 0xff))

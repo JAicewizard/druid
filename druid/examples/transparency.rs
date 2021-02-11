@@ -12,22 +12,18 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-//! An example of a custom drawing widget.
-//! We draw an image, some text, a shape, and a curve.
+//! An example of a transparent window background.
+//! Useful for dropdowns, tooltips and other overlay windows.
 
-use druid::{kurbo::{BezPath, Circle}, widget::{Button, Flex}};
-use druid::piet::{FontFamily, ImageFormat, InterpolationMode, Text, TextLayoutBuilder};
+use druid::{kurbo::{Circle}, widget::{Button, Flex}};
 use druid::widget::prelude::*;
 use druid::{
-    Affine, AppLauncher, Color, FontDescriptor, LocalizedString, Point, Rect, TextLayout,
+    AppLauncher, Color, LocalizedString, Rect,
     WindowDesc,
 };
 
 struct CustomWidget;
 
-// If this widget has any child widgets it should call its event, update and layout
-// (and lifecycle) methods as well to make sure it works. Some things can be filtered,
-// but a general rule is to just pass it through unless you really know you don't want it.
 impl Widget<String> for CustomWidget {
     fn event(&mut self, _ctx: &mut EventCtx, _event: &Event, _data: &mut String, _env: &Env) {}
 
@@ -80,10 +76,11 @@ pub fn main() {
     let btn = Button::new("Hello there");
     let example = Flex::column().with_child(CustomWidget {}).with_child(btn);
     let window = WindowDesc::new(example)
-    .show_titlebar(false)
-    .window_size((823., 823.))
-    .resizable(true)
-    .title(LocalizedString::new("Fancy Colors"));
+        .show_titlebar(false)
+        .window_size((823., 823.))
+        .transparent(true)
+        .resizable(true)
+        .title(LocalizedString::new("Fancy Colors"));
     
     AppLauncher::with_window(window)
         .use_simple_logger()

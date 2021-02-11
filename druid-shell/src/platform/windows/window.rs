@@ -86,6 +86,7 @@ pub(crate) struct WindowBuilder {
     resizable: bool,
     show_titlebar: bool,
     size: Option<Size>,
+    transparent: bool,
     min_size: Option<Size>,
     position: Option<Point>,
     state: window::WindowState,
@@ -187,6 +188,7 @@ struct WindowState {
     timers: Arc<Mutex<TimerSlots>>,
     deferred_queue: RefCell<Vec<DeferredOp>>,
     has_titlebar: Cell<bool>,
+    is_transparent: Cell<bool>,
     // For resizable borders, window can still be resized with code.
     is_resizable: Cell<bool>,
     handle_titlebar: Cell<bool>,
@@ -476,6 +478,10 @@ impl MyWndProc {
         self.with_window_state(|state| state.is_resizable.get())
     }
 
+    fn is_transparent(&self) -> bool {
+        self.with_window_state(|state| state.is_transparent.get())
+    }
+
     fn handle_deferred_queue(&self) {
         let q = self.with_window_state(move |state| state.deferred_queue.replace(Vec::new()));
         for op in q {
@@ -669,17 +675,17 @@ impl WndProc for MyWndProc {
             WM_ACTIVATE => {
                 if LOWORD(wparam as u32) as u32 != 0 {
                     unsafe {
-                        if !self.has_titlebar() {
+                        if !self.has_titlebar() && !self.is_transparent() {
                             // This makes windows paint the dropshadow around the window
                             // since we give it a "1 pixel frame" that we paint over anyway.
                             // From my testing top seems to be the best option when it comes to avoiding resize artifacts.
-                            // let margins = MARGINS {
-                            //     cxLeftWidth: 0,
-                            //     cxRightWidth: 0,
-                            //     cyTopHeight: 1,
-                            //     cyBottomHeight: 0,
-                            // };
-                            // DwmExtendFrameIntoClientArea(hwnd, &margins);
+                            let margins = MARGINS {
+                                cxLeftWidth: 0,
+                                cxRightWidth: 0,
+                                cyTopHeight: 1,
+                                cyBottomHeight: 0,
+                            };
+                            DwmExtendFrameIntoClientArea(hwnd, &margins);
                         }
                         if SetWindowPos(
                             hwnd,
@@ -1171,6 +1177,7 @@ impl WindowBuilder {
             menu: None,
             resizable: true,
             show_titlebar: true,
+            transparent: false,
             present_strategy: Default::default(),
             size: None,
             min_size: None,
@@ -1198,6 +1205,10 @@ impl WindowBuilder {
 
     pub fn show_titlebar(&mut self, show_titlebar: bool) {
         self.show_titlebar = show_titlebar;
+    }
+
+    pub fn set_transparent(&mut self, transparent: bool) {
+        self.transparent = transparent;
     }
 
     pub fn set_title<S: Into<String>>(&mut self, title: S) {
@@ -1270,6 +1281,7 @@ impl WindowBuilder {
                 deferred_queue: RefCell::new(Vec::new()),
                 has_titlebar: Cell::new(self.show_titlebar),
                 is_resizable: Cell::new(self.resizable),
+                is_transparent: Cell::new(self.transparent),
                 handle_titlebar: Cell::new(false),
             };
             let win = Rc::new(window);
@@ -1292,7 +1304,12 @@ impl WindowBuilder {
             };
             win.wndproc.connect(&handle, state);
 
-            let mut dwStyle = WS_POPUP;
+            
+            let mut dwStyle = if self.transparent {
+                WS_POPUP
+            } else {
+                WS_OVERLAPPEDWINDOW
+            };
             if !self.resizable {
                 dwStyle &= !(WS_THICKFRAME | WS_MAXIMIZEBOX);
             }
@@ -1327,15 +1344,20 @@ impl WindowBuilder {
             if hwnd.is_null() {
                 return Err(Error::NullHwnd);
             }
-            let margins = MARGINS {
-                cxLeftWidth: -1,
-                cxRightWidth: -1,
-                cyTopHeight: -1,
-                cyBottomHeight: -1, 
-            };
-            DwmExtendFrameIntoClientArea(hwnd, &margins);
-            if hwnd.is_null() {
-                return Err(Error::NullHwnd);
+
+            if self.transparent {
+                let margins = MARGINS {
+                    cxLeftWidth: -1,
+                    cxRightWidth: -1,
+                    cyTopHeight: -1,
+                    cyBottomHeight: -1, 
+                };
+                if DwmExtendFrameIntoClientArea(hwnd, &margins) == 0 {
+                    warn!(
+                        "failed to expand dwm frame window: {}",
+                        Error::Hr(HRESULT_FROM_WIN32(GetLastError()))
+                    );
+                }
             }
 
             if let Some(size) = self.size {

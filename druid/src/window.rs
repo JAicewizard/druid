@@ -20,7 +20,7 @@ use std::mem;
 // Automatically defaults to std::time::Instant on non Wasm platforms
 use instant::Instant;
 
-use crate::piet::{Piet, RenderContext};
+use crate::piet::{Piet, RenderContext, Color};
 use crate::shell::{Counter, Cursor, Region, WindowHandle};
 
 use crate::app::{PendingWindow, WindowSizePolicy};
@@ -34,6 +34,9 @@ use crate::{
     InternalLifeCycle, LayoutCtx, LifeCycle, LifeCycleCtx, MenuDesc, PaintCtx, Point, Size,
     TimerToken, UpdateCtx, Widget, WidgetId, WidgetPod,
 };
+
+
+const TRANSPARENT: Color = Color::rgba8(0, 0, 0, 0);
 
 /// A unique identifier for a window.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -55,6 +58,7 @@ pub struct Window<T> {
     pub(crate) focus: Option<WidgetId>,
     pub(crate) handle: WindowHandle,
     pub(crate) timers: HashMap<TimerToken, WidgetId>,
+    pub(crate) transparent: bool,
     ext_handle: ExtEventSink,
     // delegate?
 }
@@ -73,6 +77,7 @@ impl<T> Window<T> {
             size: Size::ZERO,
             invalid: Region::EMPTY,
             title: pending.title,
+            transparent: false,
             menu: pending.menu,
             context_menu: None,
             last_anim: None,
@@ -86,6 +91,7 @@ impl<T> Window<T> {
 }
 
 impl<T: Data> Window<T> {
+
     /// `true` iff any child requested an animation frame since the last `AnimFrame` event.
     pub(crate) fn wants_animation_frame(&self) -> bool {
         self.root.state().request_anim
@@ -362,9 +368,14 @@ impl<T: Data> Window<T> {
             self.layout(queue, data, env);
         }
 
+        
         piet.fill(
             invalid.bounding_box(),
-            &env.get(crate::theme::WINDOW_BACKGROUND_COLOR),
+            &(if self.transparent {
+                TRANSPARENT
+            } else {
+                env.get(crate::theme::WINDOW_BACKGROUND_COLOR)
+            }),
         );
         self.paint(piet, invalid, queue, data, env);
     }

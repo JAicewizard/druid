@@ -1305,7 +1305,6 @@ impl WindowBuilder {
             };
             win.wndproc.connect(&handle, state);
 
-            
             let mut dwStyle = if self.transparent {
                 WS_POPUP
             } else {

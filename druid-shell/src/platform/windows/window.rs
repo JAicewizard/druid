@@ -673,13 +673,13 @@ impl WndProc for MyWndProc {
                             // This makes windows paint the dropshadow around the window
                             // since we give it a "1 pixel frame" that we paint over anyway.
                             // From my testing top seems to be the best option when it comes to avoiding resize artifacts.
-                            let margins = MARGINS {
-                                cxLeftWidth: 0,
-                                cxRightWidth: 0,
-                                cyTopHeight: 1,
-                                cyBottomHeight: 0,
-                            };
-                            DwmExtendFrameIntoClientArea(hwnd, &margins);
+                            // let margins = MARGINS {
+                            //     cxLeftWidth: 0,
+                            //     cxRightWidth: 0,
+                            //     cyTopHeight: 1,
+                            //     cyBottomHeight: 0,
+                            // };
+                            // DwmExtendFrameIntoClientArea(hwnd, &margins);
                         }
                         if SetWindowPos(
                             hwnd,
@@ -1292,14 +1292,14 @@ impl WindowBuilder {
             };
             win.wndproc.connect(&handle, state);
 
-            let mut dwStyle = WS_OVERLAPPEDWINDOW;
+            let mut dwStyle = WS_POPUP;
             if !self.resizable {
                 dwStyle &= !(WS_THICKFRAME | WS_MAXIMIZEBOX);
             }
             if !self.show_titlebar {
                 dwStyle &= !(WS_MINIMIZEBOX | WS_SYSMENU | WS_OVERLAPPED);
             }
-            let mut dwExStyle = 0;
+            let mut dwExStyle = 0; 
             if self.present_strategy == PresentStrategy::Flip {
                 dwExStyle |= WS_EX_NOREDIRECTIONBITMAP;
             }
@@ -1324,6 +1324,16 @@ impl WindowBuilder {
                 0 as HINSTANCE,
                 win,
             );
+            if hwnd.is_null() {
+                return Err(Error::NullHwnd);
+            }
+            let margins = MARGINS {
+                cxLeftWidth: -1,
+                cxRightWidth: -1,
+                cyTopHeight: -1,
+                cyBottomHeight: -1, 
+            };
+            DwmExtendFrameIntoClientArea(hwnd, &margins);
             if hwnd.is_null() {
                 return Err(Error::NullHwnd);
             }

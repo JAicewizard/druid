@@ -80,6 +80,7 @@ pub struct WindowDesc<T> {
 pub struct PendingWindow<T> {
     pub(crate) root: Box<dyn Widget<T>>,
     pub(crate) title: LabelText<T>,
+    pub(crate) transparent: bool,
     pub(crate) menu: Option<MenuDesc<T>>,
     pub(crate) size_policy: WindowSizePolicy, // This is copied over from the WindowConfig
                                               // when the native window is constructed.
@@ -96,6 +97,7 @@ impl<T: Data> PendingWindow<T> {
             root: Box::new(root),
             title: LocalizedString::new("app-name").into(),
             menu: MenuDesc::platform_default(),
+            transparent: false,
             size_policy: WindowSizePolicy::User,
         }
     }
@@ -108,6 +110,12 @@ impl<T: Data> PendingWindow<T> {
     /// [`LocalizedString`]: struct.LocalizedString.html
     pub fn title(mut self, title: impl Into<LabelText<T>>) -> Self {
         self.title = title.into();
+        self
+    }
+    
+    /// Set wether the background should be transparent
+    pub fn transparent(mut self, transparent: bool) -> Self {
+        self.transparent = transparent;
         self
     }
 
@@ -482,6 +490,7 @@ impl<T: Data> WindowDesc<T> {
     /// transparent.
     pub fn transparent(mut self, transparent: bool) -> Self {
         self.config = self.config.transparent(transparent);
+        self.pending = self.pending.transparent(transparent);
         self
     }
 

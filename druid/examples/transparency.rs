@@ -58,11 +58,6 @@ impl Widget<String> for CustomWidget {
     // It goes event -> update -> layout -> paint, and each method can influence the next.
     // Basically, anything that changes the appearance of a widget causes a paint.
     fn paint(&mut self, ctx: &mut PaintCtx, data: &String, env: &Env) {
-        ctx.clear(Color::rgba8(0x0,0x0,0x0,0x0));
-        // let size = ctx.size();
-        // let rect = size.to_rect();
-        // ctx.fill(rect, &Color::rgba8(0x0,0x0,0x0,0x0));
-
         let circle = Circle::new((130., 130.), 100.);
         ctx.fill(circle, &Color::RED);
 

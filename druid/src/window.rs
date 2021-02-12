@@ -77,7 +77,7 @@ impl<T> Window<T> {
             size: Size::ZERO,
             invalid: Region::EMPTY,
             title: pending.title,
-            transparent: false,
+            transparent: pending.transparent,
             menu: pending.menu,
             context_menu: None,
             last_anim: None,
@@ -367,7 +367,6 @@ impl<T: Data> Window<T> {
             self.layout(queue, data, env);
         }
 
-        
         piet.fill(
             invalid.bounding_box(),
             &(if self.transparent {

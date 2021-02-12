@@ -74,7 +74,7 @@ pub fn main() {
         .window_size((823., 823.))
         .transparent(true)
         .resizable(true)
-        .title(LocalizedString::new("Fancy Colors"));
+        .title(LocalizedString::new("Transparent background"));
     
     AppLauncher::with_window(window)
         .use_simple_logger()

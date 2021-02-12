@@ -45,33 +45,32 @@ impl Widget<String> for CustomWidget {
         _data: &String,
         _env: &Env,
     ) -> Size {
-
-        if bc.is_width_bounded() | bc.is_height_bounded() {
-            let size = Size::new(100.0, 100.0);
-            bc.constrain(size)
-        } else {
-            bc.max()
-        }
+        bc.max()
     }
 
     // The paint method gets called last, after an event flow.
     // It goes event -> update -> layout -> paint, and each method can influence the next.
     // Basically, anything that changes the appearance of a widget causes a paint.
     fn paint(&mut self, ctx: &mut PaintCtx, data: &String, env: &Env) {
-        let circle = Circle::new((130., 130.), 100.);
+        let boundaries = ctx.size().to_rect();
+        let center = (boundaries.width() / 2., boundaries.height() / 2.);
+        let circle = Circle::new(center, center.0.min(center.1));
         ctx.fill(circle, &Color::RED);
+        
+        let rect1 = Rect::new(0., 0.,  boundaries.width() / 2., boundaries.height() / 2.);
+        ctx.fill(rect1, &Color::rgba8(0x0, 0xff, 0, 125));
 
-        let circle = Rect::new(100., 100., 300., 300.);
-        ctx.fill(circle, &Color::rgba8(0x0, 0x0, 0xff, 125));
-
+        let rect2 = Rect::new(boundaries.width() / 2., boundaries.height() / 2.,  boundaries.width(), boundaries.height());
+        ctx.fill(rect2, &Color::rgba8(0x0, 0x0, 0xff, 125));
     }
 }
 
 pub fn main() {
     let btn = Button::new("Hello there");
-    let example = Flex::column().with_child(CustomWidget {}).with_child(btn);
+    let example = Flex::column().with_flex_child(CustomWidget {}, 10.0).with_flex_child(btn, 1.0);
     let window = WindowDesc::new(example)
         .show_titlebar(false)
+        .set_position((50., 50.))
         .window_size((823., 823.))
         .transparent(true)
         .resizable(true)

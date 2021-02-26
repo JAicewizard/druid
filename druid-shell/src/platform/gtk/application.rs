@@ -14,9 +14,9 @@
 
 //! GTK implementation of features at the application scope.
 
-use gio::prelude::ApplicationExtManual;
-use gio::{ApplicationExt, ApplicationFlags, Cancellable};
-use gtk::{Application as GtkApplication, GtkApplicationExt};
+use gtk::gio::prelude::ApplicationExtManual;
+use gtk::gio::{ApplicationExt, ApplicationFlags, Cancellable};
+use gtk::{Application as GtkApplication, GtkApplicationExt, GtkWindowExt};
 
 use crate::application::AppHandler;
 
@@ -30,6 +30,8 @@ pub(crate) struct Application {
 
 impl Application {
     pub fn new() -> Result<Application, Error> {
+        println!("NEWAPPFLKAD");
+
         // TODO: we should give control over the application ID to the user
         let gtk_app = match GtkApplication::new(
             Some("com.github.linebender.druid"),
@@ -61,19 +63,21 @@ impl Application {
     }
 
     pub fn run(self, _handler: Option<Box<dyn AppHandler>>) {
-        // TODO: should we pass the command line arguments?
+        println!("SDKFLSD");
         self.gtk_app.run(&[]);
     }
 
     pub fn quit(&self) {
-        match self.gtk_app.get_active_window() {
-            None => {
-                // no application is running, main is not running
-            }
-            Some(_) => {
-                // we still have an active window, close the run loop
-                self.gtk_app.quit();
-            }
+        while self.gtk_app.get_active_window().is_some(){
+            match self.gtk_app.get_active_window() {
+                None => {
+                    // no application is running, main is not running
+                }
+                Some(window) => {
+                    // we still have an active window, close the run loop
+                    window.destroy(); //TODO: maybe just close??
+                }
+            }    
         }
     }
 
@@ -82,6 +86,6 @@ impl Application {
     }
 
     pub fn get_locale() -> String {
-        glib::get_language_names()[0].as_str().into()
+        gtk::glib::get_language_names()[0].as_str().into()
     }
 }

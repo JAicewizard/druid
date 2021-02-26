@@ -17,7 +17,11 @@
 use std::ffi::OsString;
 
 use anyhow::anyhow;
+use std::sync::mpsc;
+
+
 use gtk::{FileChooserAction, FileChooserExt, FileFilter, NativeDialogExt, ResponseType, Window};
+use gtk::gio::FileExt;
 
 use crate::dialog::{FileDialogOptions, FileDialogType, FileSpec};
 use crate::Error;
@@ -55,7 +59,8 @@ pub(crate) fn get_file_dialog_path(
 
     dialog.set_action(action);
 
-    dialog.set_show_hidden(options.show_hidden);
+    //FIXME: Use a filter for this? 
+    //dialog.set_show_hidden(options.show_hidden);
 
     if action != FileChooserAction::Save {
         dialog.set_select_multiple(options.multi_selection);
@@ -93,23 +98,25 @@ pub(crate) fn get_file_dialog_path(
         dialog.set_current_name(default_name);
     }
 
-    let result = dialog.run();
+    dialog.set_modal(true);
+    let (tx, rx)= mpsc::channel();
 
-    let result = match result {
-        ResponseType::Accept => match dialog.get_filename() {
-            Some(path) => Ok(path.into_os_string()),
-            None => Err(anyhow!("No path received for filename")),
-        },
-        ResponseType::Cancel => Err(anyhow!("Dialog was deleted")),
-        _ => {
-            tracing::warn!("Unhandled dialog result: {:?}", result);
-            Err(anyhow!("Unhandled dialog result"))
-        }
-    };
+    dialog.connect_response(move|chooser, result|{
+        tx.send(match result {
+            ResponseType::Accept => match chooser.get_file() {
+                Some(path) => Ok(path.get_path().unwrap().into_os_string()),
+                None => Err(anyhow!("No path received for filename")),
+            },
+            ResponseType::Cancel => Err(anyhow!("Dialog was deleted")),
+            _ => {
+                tracing::warn!("Unhandled dialog result: {:?}", result);
+                Err(anyhow!("Unhandled dialog result"))
+            },
+        }).unwrap();    
+    });
 
     // TODO properly handle errors into the Error type
 
     dialog.destroy();
-
-    Ok(result?)
+    Ok(rx.recv().unwrap()?)
 }

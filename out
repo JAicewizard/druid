@@ -1,0 +1,674 @@
+warning: unused `Result` that must be used
+   --> /home/jaap/Projects/forks/piet/piet-cairo/src/lib.rs:181:9
+    |
+181 |         self.ctx.save();
+    |         ^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(unused_must_use)]` on by default
+    = note: this `Result` may be an `Err` variant, which should be handled
+
+warning: unused `Result` that must be used
+   --> /home/jaap/Projects/forks/piet/piet-cairo/src/lib.rs:191:13
+    |
+191 |             self.ctx.restore();
+    |             ^^^^^^^^^^^^^^^^^^^
+    |
+    = note: this `Result` may be an `Err` variant, which should be handled
+
+warning: 2 warnings emitted
+
+warning: unused import: `TryFrom`
+  --> druid-shell/src/platform/gtk/window.rs:19:20
+   |
+19 | use std::convert::{TryFrom};
+   |                    ^^^^^^^
+   |
+   = note: `#[warn(unused_imports)]` on by default
+
+warning: unused variable: `id`
+   --> druid-shell/src/platform/gtk/menu.rs:185:21
+    |
+185 |                     id,
+    |                     ^^ help: try ignoring the field: `id: _`
+    |
+    = note: `#[warn(unused_variables)]` on by default
+
+warning: unused variable: `key`
+   --> druid-shell/src/platform/gtk/menu.rs:186:21
+    |
+186 |                     key,
+    |                     ^^^ help: try ignoring the field: `key: _`
+
+warning: unused variable: `enabled`
+   --> druid-shell/src/platform/gtk/menu.rs:187:21
+    |
+187 |                     enabled,
+    |                     ^^^^^^^ help: try ignoring the field: `enabled: _`
+
+warning: unused variable: `drawing_area`
+   --> druid-shell/src/platform/gtk/window.rs:75:28
+    |
+75  |       (@param $x:ident) => ( $x );
+    |                              ^^ help: if this is intentional, prefix it with an underscore: `_drawing_area`
+...
+393 |           win_state.drawing_area.set_draw_func(clone!(handle => move |drawing_area, context, width, height| {
+    |  ______________________________________________-
+394 | |             if let Some(state) = handle.state.upgrade() {
+395 | |                 let mut scale = state.scale.get();
+396 | |                 let mut scale_changed = false;
+...   |
+468 | |             }
+469 | |         }));
+    | |__________- in this macro invocation
+    |
+    = note: `#[warn(unused_variables)]` on by default
+    = note: this warning originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unused variable: `n`
+   --> druid-shell/src/platform/gtk/window.rs:75:28
+    |
+75  |       (@param $x:ident) => ( $x );
+    |                              ^^ help: if this is intentional, prefix it with an underscore: `_n`
+...
+511 |           win_state.click_controller.connect_released(clone!(handle => move |guesture, n, x, y| {
+    |  _____________________________________________________-
+512 | |             if let Some(state) = handle.state.upgrade() {
+513 | |                 state.with_handler(|handler| {
+514 | |                     if let Some(button) = get_mouse_button(guesture.get_button()) {
+...   |
+530 | |             }
+531 | |         }));
+    | |__________- in this macro invocation
+    |
+    = note: this warning originates in a macro (in Nightly builds, run with -Z macro-backtrace for more info)
+
+warning: unused variable: `position`
+   --> druid-shell/src/platform/gtk/window.rs:835:32
+    |
+835 |     pub fn set_position(&self, position: Point) {
+    |                                ^^^^^^^^ help: if this is intentional, prefix it with an underscore: `_position`
+
+warning: unused variable: `level`
+   --> druid-shell/src/platform/gtk/window.rs:849:29
+    |
+849 |     pub fn set_level(&self, level: WindowLevel) {
+    |                             ^^^^^ help: if this is intentional, prefix it with an underscore: `_level`
+
+warning: unused variable: `state`
+   --> druid-shell/src/platform/gtk/window.rs:984:21
+    |
+984 |         if let Some(state) = self.state.upgrade() {
+    |                     ^^^^^ help: if this is intentional, prefix it with an underscore: `_state`
+
+warning: variable does not need to be mutable
+   --> druid-shell/src/platform/gtk/window.rs:257:13
+    |
+257 |         let mut can_transparent = false;
+    |             ----^^^^^^^^^^^^^^^
+    |             |
+    |             help: remove this `mut`
+    |
+    = note: `#[warn(unused_mut)]` on by default
+
+warning: function is never used: `modifiers_to_gdk_modifier_type`
+   --> druid-shell/src/platform/gtk/menu.rs:247:4
+    |
+247 | fn modifiers_to_gdk_modifier_type(raw_modifiers: RawMods) -> gdk::ModifierType {
+    |    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    |
+    = note: `#[warn(dead_code)]` on by default
+
+warning: field is never read: `click_counter`
+   --> druid-shell/src/platform/gtk/window.rs:177:5
+    |
+177 |     click_counter: ClickCounter,
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: function is never used: `hardware_keycode_to_code`
+  --> druid-shell/src/platform/shared/keyboard.rs:61:8
+   |
+61 | pub fn hardware_keycode_to_code(hw_keycode: u16) -> Code {
+   |        ^^^^^^^^^^^^^^^^^^^^^^^^
+
+warning: constant in pattern `Escape` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:182:9
+    |
+182 |         Escape => Code::Escape,
+    |         ^^^^^^ help: convert the identifier to upper case: `ESCAPE`
+    |
+    = note: `#[warn(non_upper_case_globals)]` on by default
+
+warning: constant in pattern `minus` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:193:9
+    |
+193 |         minus => Code::Minus,
+    |         ^^^^^ help: convert the identifier to upper case: `MINUS`
+
+warning: constant in pattern `equal` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:194:9
+    |
+194 |         equal => Code::Equal,
+    |         ^^^^^ help: convert the identifier to upper case: `EQUAL`
+
+warning: constant in pattern `BackSpace` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:195:9
+    |
+195 |         BackSpace => Code::Backspace,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `BACK_SPACE`
+
+warning: constant in pattern `Tab` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:196:9
+    |
+196 |         Tab => Code::Tab,
+    |         ^^^ help: convert the identifier to upper case: `TAB`
+
+warning: constant in pattern `q` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:197:9
+    |
+197 |         q|Q => Code::KeyQ,
+    |         ^ help: convert the identifier to upper case: `Q`
+
+warning: constant in pattern `w` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:198:9
+    |
+198 |         w|W => Code::KeyW,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `W`
+
+warning: constant in pattern `e` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:199:9
+    |
+199 |         e|E => Code::KeyE,
+    |         ^ help: convert the identifier to upper case: `E`
+
+warning: constant in pattern `r` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:200:9
+    |
+200 |         r|R => Code::KeyR,
+    |         ^ help: convert the identifier to upper case: `R`
+
+warning: constant in pattern `t` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:201:9
+    |
+201 |         t|T => Code::KeyT,
+    |         ^ help: convert the identifier to upper case: `T`
+
+warning: constant in pattern `y` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:202:9
+    |
+202 |         y|Y => Code::KeyY,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `Y`
+
+warning: constant in pattern `u` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:203:9
+    |
+203 |         u|U => Code::KeyU,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `U`
+
+warning: constant in pattern `i` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:204:9
+    |
+204 |         i|I => Code::KeyI,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `I`
+
+warning: constant in pattern `o` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:205:9
+    |
+205 |         o|O => Code::KeyO,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `O`
+
+warning: constant in pattern `p` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:206:9
+    |
+206 |         p|P => Code::KeyP,
+    |         ^ help: convert the identifier to upper case: `P`
+
+warning: constant in pattern `bracketleft` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:207:9
+    |
+207 |         bracketleft => Code::BracketLeft,
+    |         ^^^^^^^^^^^ help: convert the identifier to upper case: `BRACKETLEFT`
+
+warning: constant in pattern `bracketright` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:208:9
+    |
+208 |         bracketright => Code::BracketRight,
+    |         ^^^^^^^^^^^^ help: convert the identifier to upper case: `BRACKETRIGHT`
+
+warning: constant in pattern `_3270_Enter` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:209:9
+    |
+209 |         _3270_Enter => Code::Enter,
+    |         ^^^^^^^^^^^ help: convert the identifier to upper case: `_3270_ENTER`
+
+warning: constant in pattern `Control_L` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:210:9
+    |
+210 |         Control_L => Code::ControlLeft,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `CONTROL_L`
+
+warning: constant in pattern `a` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:211:9
+    |
+211 |         a|A => Code::KeyA,
+    |         ^ help: convert the identifier to upper case: `A`
+
+warning: constant in pattern `s` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:212:9
+    |
+212 |         s|S => Code::KeyS,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `S`
+
+warning: constant in pattern `d` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:213:9
+    |
+213 |         d|D => Code::KeyD,
+    |         ^ help: convert the identifier to upper case: `D`
+
+warning: constant in pattern `f` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:214:9
+    |
+214 |         f|F => Code::KeyF,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `F`
+
+warning: constant in pattern `g` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:215:9
+    |
+215 |         g|G => Code::KeyG,
+    |         ^ help: convert the identifier to upper case: `G`
+
+warning: constant in pattern `h` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:216:9
+    |
+216 |         h|H => Code::KeyH,
+    |         ^ help: convert the identifier to upper case: `H`
+
+warning: constant in pattern `j` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:217:9
+    |
+217 |         j|J => Code::KeyJ,
+    |         ^ help: convert the identifier to upper case: `J`
+
+warning: constant in pattern `k` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:218:9
+    |
+218 |         k|K => Code::KeyK,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `K`
+
+warning: constant in pattern `l` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:219:9
+    |
+219 |         l|L => Code::KeyL,
+    |         ^ help: convert the identifier to upper case: `L`
+
+warning: constant in pattern `semicolon` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:220:9
+    |
+220 |         semicolon => Code::Semicolon,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `SEMICOLON`
+
+warning: constant in pattern `Shift_L` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:223:9
+    |
+223 |         Shift_L => Code::ShiftLeft,
+    |         ^^^^^^^ help: convert the identifier to upper case: `SHIFT_L`
+
+warning: constant in pattern `backslash` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:224:9
+    |
+224 |         backslash => Code::Backslash,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `BACKSLASH`
+
+warning: constant in pattern `z` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:225:9
+    |
+225 |         z|Z => Code::KeyZ,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `Z`
+
+warning: constant in pattern `x` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:226:9
+    |
+226 |         x|X => Code::KeyX,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `X`
+
+warning: constant in pattern `c` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:227:9
+    |
+227 |         c|C => Code::KeyC,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `C`
+
+warning: constant in pattern `v` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:228:9
+    |
+228 |         v|V => Code::KeyV,
+    |         ^ help: convert the identifier to upper case (notice the capitalization): `V`
+
+warning: constant in pattern `b` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:229:9
+    |
+229 |         b|B => Code::KeyB,
+    |         ^ help: convert the identifier to upper case: `B`
+
+warning: constant in pattern `n` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:230:9
+    |
+230 |         n|N => Code::KeyN,
+    |         ^ help: convert the identifier to upper case: `N`
+
+warning: constant in pattern `m` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:231:9
+    |
+231 |         m|M => Code::KeyM,
+    |         ^ help: convert the identifier to upper case: `M`
+
+warning: constant in pattern `comma` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:232:9
+    |
+232 |         comma => Code::Comma,
+    |         ^^^^^ help: convert the identifier to upper case: `COMMA`
+
+warning: constant in pattern `period` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:233:9
+    |
+233 |         period => Code::Period,
+    |         ^^^^^^ help: convert the identifier to upper case: `PERIOD`
+
+warning: constant in pattern `slash` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:234:9
+    |
+234 |         slash => Code::Slash,
+    |         ^^^^^ help: convert the identifier to upper case: `SLASH`
+
+warning: constant in pattern `Shift_R` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:235:9
+    |
+235 |         Shift_R => Code::ShiftRight,
+    |         ^^^^^^^ help: convert the identifier to upper case: `SHIFT_R`
+
+warning: constant in pattern `KP_Multiply` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:236:9
+    |
+236 |         KP_Multiply => Code::NumpadMultiply,
+    |         ^^^^^^^^^^^ help: convert the identifier to upper case: `KP_MULTIPLY`
+
+warning: constant in pattern `Alt_L` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:237:9
+    |
+237 |         Alt_L => Code::AltLeft,
+    |         ^^^^^ help: convert the identifier to upper case: `ALT_L`
+
+warning: constant in pattern `space` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:238:9
+    |
+238 |         space => Code::Space,
+    |         ^^^^^ help: convert the identifier to upper case: `SPACE`
+
+warning: constant in pattern `Caps_Lock` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:239:9
+    |
+239 |         Caps_Lock => Code::CapsLock,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `CAPS_LOCK`
+
+warning: constant in pattern `Num_Lock` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:250:9
+    |
+250 |         Num_Lock => Code::NumLock,
+    |         ^^^^^^^^ help: convert the identifier to upper case: `NUM_LOCK`
+
+warning: constant in pattern `Scroll_Lock` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:251:9
+    |
+251 |         Scroll_Lock => Code::ScrollLock,
+    |         ^^^^^^^^^^^ help: convert the identifier to upper case: `SCROLL_LOCK`
+
+warning: constant in pattern `KP_Subtract` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:255:9
+    |
+255 |         KP_Subtract => Code::NumpadSubtract,
+    |         ^^^^^^^^^^^ help: convert the identifier to upper case: `KP_SUBTRACT`
+
+warning: constant in pattern `KP_Add` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:259:9
+    |
+259 |         KP_Add => Code::NumpadAdd,
+    |         ^^^^^^ help: convert the identifier to upper case: `KP_ADD`
+
+warning: constant in pattern `KP_Decimal` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:264:9
+    |
+264 |         KP_Decimal => Code::NumpadDecimal,
+    |         ^^^^^^^^^^ help: convert the identifier to upper case: `KP_DECIMAL`
+
+warning: constant in pattern `KP_Enter` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:272:9
+    |
+272 |         KP_Enter => Code::NumpadEnter,
+    |         ^^^^^^^^ help: convert the identifier to upper case: `KP_ENTER`
+
+warning: constant in pattern `Control_R` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:273:9
+    |
+273 |         Control_R => Code::ControlRight,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `CONTROL_R`
+
+warning: constant in pattern `KP_Divide` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:274:9
+    |
+274 |         KP_Divide => Code::NumpadDivide,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `KP_DIVIDE`
+
+warning: constant in pattern `_3270_PrintScreen` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:275:9
+    |
+275 |         _3270_PrintScreen => Code::PrintScreen,
+    |         ^^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `_3270_PRINT_SCREEN`
+
+warning: constant in pattern `Alt_R` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:276:9
+    |
+276 |         Alt_R => Code::AltRight,
+    |         ^^^^^ help: convert the identifier to upper case: `ALT_R`
+
+warning: constant in pattern `Home` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:277:9
+    |
+277 |         Home => Code::Home,
+    |         ^^^^ help: convert the identifier to upper case: `HOME`
+
+warning: constant in pattern `uparrow` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:278:9
+    |
+278 |         uparrow => Code::ArrowUp,
+    |         ^^^^^^^ help: convert the identifier to upper case: `UPARROW`
+
+warning: constant in pattern `Page_Up` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:279:9
+    |
+279 |         Page_Up => Code::PageUp,
+    |         ^^^^^^^ help: convert the identifier to upper case: `PAGE_UP`
+
+warning: constant in pattern `leftarrow` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:280:9
+    |
+280 |         leftarrow => Code::ArrowLeft,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `LEFTARROW`
+
+warning: constant in pattern `rightarrow` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:281:9
+    |
+281 |         rightarrow => Code::ArrowRight,
+    |         ^^^^^^^^^^ help: convert the identifier to upper case: `RIGHTARROW`
+
+warning: constant in pattern `End` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:282:9
+    |
+282 |         End => Code::End,
+    |         ^^^ help: convert the identifier to upper case: `END`
+
+warning: constant in pattern `downarrow` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:283:9
+    |
+283 |         downarrow => Code::ArrowDown,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `DOWNARROW`
+
+warning: constant in pattern `Page_Down` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:284:9
+    |
+284 |         Page_Down => Code::PageDown,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `PAGE_DOWN`
+
+warning: constant in pattern `Insert` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:285:9
+    |
+285 |         Insert => Code::Insert,
+    |         ^^^^^^ help: convert the identifier to upper case: `INSERT`
+
+warning: constant in pattern `Delete` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:286:9
+    |
+286 |         Delete => Code::Delete,
+    |         ^^^^^^ help: convert the identifier to upper case: `DELETE`
+
+warning: constant in pattern `AudioMute` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:287:9
+    |
+287 |         AudioMute => Code::AudioVolumeMute,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_MUTE`
+
+warning: constant in pattern `AudioLowerVolume` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:288:9
+    |
+288 |         AudioLowerVolume => Code::AudioVolumeDown,
+    |         ^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_LOWER_VOLUME`
+
+warning: constant in pattern `AudioRaiseVolume` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:289:9
+    |
+289 |         AudioRaiseVolume => Code::AudioVolumeUp,
+    |         ^^^^^^^^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_RAISE_VOLUME`
+
+warning: constant in pattern `KP_Equal` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:290:9
+    |
+290 |         KP_Equal => Code::NumpadEqual,
+    |         ^^^^^^^^ help: convert the identifier to upper case: `KP_EQUAL`
+
+warning: constant in pattern `Pause` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:291:9
+    |
+291 |         Pause => Code::Pause,
+    |         ^^^^^ help: convert the identifier to upper case: `PAUSE`
+
+warning: constant in pattern `yen` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:295:9
+    |
+295 |         yen => Code::IntlYen,
+    |         ^^^ help: convert the identifier to upper case: `YEN`
+
+warning: constant in pattern `Meta_L` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:296:9
+    |
+296 |         Meta_L => Code::MetaLeft,
+    |         ^^^^^^ help: convert the identifier to upper case: `META_L`
+
+warning: constant in pattern `Meta_R` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:297:9
+    |
+297 |         Meta_R => Code::MetaRight,
+    |         ^^^^^^ help: convert the identifier to upper case: `META_R`
+
+warning: constant in pattern `Redo` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:300:9
+    |
+300 |         Redo => Code::Again,
+    |         ^^^^ help: convert the identifier to upper case: `REDO`
+
+warning: constant in pattern `Undo` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:302:9
+    |
+302 |         Undo => Code::Undo,
+    |         ^^^^ help: convert the identifier to upper case: `UNDO`
+
+warning: constant in pattern `Select` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:303:9
+    |
+303 |         Select => Code::Select,
+    |         ^^^^^^ help: convert the identifier to upper case: `SELECT`
+
+warning: constant in pattern `Copy` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:304:9
+    |
+304 |         Copy => Code::Copy,
+    |         ^^^^ help: convert the identifier to upper case: `COPY`
+
+warning: constant in pattern `Open` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:305:9
+    |
+305 |         Open => Code::Open,
+    |         ^^^^ help: convert the identifier to upper case: `OPEN`
+
+warning: constant in pattern `Paste` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:306:9
+    |
+306 |         Paste => Code::Paste,
+    |         ^^^^^ help: convert the identifier to upper case: `PASTE`
+
+warning: constant in pattern `Find` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:307:9
+    |
+307 |         Find => Code::Find,
+    |         ^^^^ help: convert the identifier to upper case: `FIND`
+
+warning: constant in pattern `Cut` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:308:9
+    |
+308 |         Cut => Code::Cut,
+    |         ^^^ help: convert the identifier to upper case: `CUT`
+
+warning: constant in pattern `Help` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:309:9
+    |
+309 |         Help => Code::Help,
+    |         ^^^^ help: convert the identifier to upper case: `HELP`
+
+warning: constant in pattern `WakeUp` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:311:9
+    |
+311 |         WakeUp => Code::WakeUp,
+    |         ^^^^^^ help: convert the identifier to upper case: `WAKE_UP`
+
+warning: constant in pattern `Eject` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:319:9
+    |
+319 |         Eject => Code::Eject,
+    |         ^^^^^ help: convert the identifier to upper case: `EJECT`
+
+warning: constant in pattern `AudioNext` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:320:9
+    |
+320 |         AudioNext => Code::MediaTrackNext,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_NEXT`
+
+warning: constant in pattern `AudioPause` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:321:9
+    |
+321 |         AudioPause => Code::MediaPlayPause,
+    |         ^^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_PAUSE`
+
+warning: constant in pattern `AudioPrev` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:322:9
+    |
+322 |         AudioPrev => Code::MediaTrackPrevious,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_PREV`
+
+warning: constant in pattern `AudioStop` should have an upper case name
+   --> druid-shell/src/platform/gtk/keycodes.rs:323:9
+    |
+323 |         AudioStop => Code::MediaStop,
+    |         ^^^^^^^^^ help: convert the identifier to upper case: `AUDIO_STOP`
+
+warning: 102 warnings emitted
+
+    Finished dev [unoptimized + debuginfo] target(s) in 0.08s
+     Running `target/debug/examples/anim`
+
+(process:159993): Gsk-CRITICAL **: 15:06:22.199: gsk_render_node_unref: assertion 'GSK_IS_RENDER_NODE (node)' failed

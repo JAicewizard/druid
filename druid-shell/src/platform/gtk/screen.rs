@@ -17,6 +17,8 @@
 use crate::screen::Monitor;
 use gdk::Display;
 use kurbo::{Point, Rect, Size};
+use gtk::gio::{ListModelExt, ListModel};
+use gtk::glib::object::Cast;
 
 fn translate_gdk_rectangle(r: gdk::Rectangle) -> Rect {
     Rect::from_origin_size(
@@ -25,25 +27,35 @@ fn translate_gdk_rectangle(r: gdk::Rectangle) -> Rect {
     )
 }
 
-fn translate_gdk_monitor(mon: gdk::Monitor) -> Monitor {
+fn translate_gdk_monitor(mon: gdk::Monitor, is_default: bool) -> Monitor {
     let area = translate_gdk_rectangle(mon.get_geometry());
     Monitor::new(
-        mon.is_primary(),
+        is_default,
         area,
-        mon.get_property_workarea()
-            .map(translate_gdk_rectangle)
-            .unwrap_or(area),
+        translate_gdk_rectangle(mon.get_geometry())
     )
 }
 
 pub(crate) fn get_monitors() -> Vec<Monitor> {
-    gdk::DisplayManager::get()
-        .list_displays()
-        .iter()
-        .flat_map(|display: &Display| {
-            (0..display.get_n_monitors())
-                .map(move |i| display.get_monitor(i).map(translate_gdk_monitor))
-                .flatten()
-        })
-        .collect()
+
+    let display = gdk::Display::get_default().unwrap();
+let defailt_monitors: &Vec<gdk::Monitor> = &display.get_monitors().map(|display: ListModel| {
+    (0..display.get_n_items())
+        .map(move |i| display.get_object(i).unwrap().downcast::<gdk::Monitor>().unwrap())
+}).unwrap().collect();
+
+    gdk::DisplayManager::get().unwrap()
+    .list_displays()
+    .iter()
+    .flat_map( |display: &Display| {
+        display.get_monitors()
+        .map(move |display: ListModel| {
+            (0..display.get_n_items())
+                .map(move |i| translate_gdk_monitor(display.get_object(i).unwrap().downcast::<gdk::Monitor>().unwrap(), defailt_monitors.contains(&display.get_object(i).unwrap().downcast::<gdk::Monitor>().unwrap())))
+        }).unwrap()
+        .collect::<Vec<Monitor>>()
+    }).collect::<Vec<Monitor>>()
+
+
+
 }

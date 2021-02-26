@@ -15,23 +15,22 @@
 //! GTK implementation of menus.
 
 use gdk::ModifierType;
-use gtk::{
-    AccelGroup, GtkMenuExt, GtkMenuItemExt, Menu as GtkMenu, MenuBar as GtkMenuBar,
-    MenuItem as GtkMenuItem, MenuShellExt, SeparatorMenuItemBuilder, WidgetExt,
-};
-
+use gtk::{  WidgetExt};
+use gtk::{PopoverMenu,PopoverMenuBar};
+use gtk::ButtonExt;
+use gtk::gio::Menu as GIOMenu;
 use super::keycodes;
 use super::window::WindowHandle;
 use crate::common_util::strip_access_key;
 use crate::hotkey::{HotKey, RawMods};
 use crate::keyboard::{KbKey, Modifiers};
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone)]
 pub struct Menu {
     items: Vec<MenuItem>,
 }
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 enum MenuItem {
     Entry {
         name: String,
@@ -79,12 +78,13 @@ impl Menu {
         self.items.push(MenuItem::Separator)
     }
 
-    fn append_items_to_menu<M: gtk::prelude::IsA<gtk::MenuShell>>(
+    fn append_items_to_menu(
         self,
-        menu: &mut M,
+        menu: &mut PopoverMenuBar,
         handle: &WindowHandle,
-        accel_group: &AccelGroup,
     ) {
+        let mut i = 0;
+
         for item in self.items {
             match item {
                 MenuItem::Entry {
@@ -93,11 +93,13 @@ impl Menu {
                     key,
                     enabled,
                 } => {
-                    let item = GtkMenuItem::with_label(&name);
+                    let item = gtk::Button::with_label(&name);
                     item.set_sensitive(enabled);
 
                     if let Some(k) = key {
-                        register_accelerator(&item, accel_group, k);
+                        let controller = gtk::ShortcutController::new();
+                        controller.add_shortcut(&register_accelerator(&k));
+                        item.add_controller(&controller)
                     }
 
                     let handle = handle.clone();
@@ -107,15 +109,94 @@ impl Menu {
                         }
                     });
 
-                    menu.append(&item);
+                    menu.add_child(&item,name.as_str());
                 }
                 MenuItem::SubMenu(name, submenu) => {
-                    let item = GtkMenuItem::with_label(&name);
-                    item.set_submenu(Some(&submenu.into_gtk_menu(handle, accel_group)));
+                    let item = gtk::MenuButton::new();
+                    item.set_label(&name);
+                    item.set_popover(Some(&submenu.clone().into_gtk_menu(handle)));
 
-                    menu.append(&item);
+                    menu.add_child(&item,name.as_str());
                 }
-                MenuItem::Separator => menu.append(&SeparatorMenuItemBuilder::new().build()),
+                MenuItem::Separator => {
+                    i+=1;
+                    menu.add_child(&gtk::Separator::new(gtk::Orientation::Horizontal),format!("sep{}",i).as_str());
+                },
+            }
+        }
+    }
+    fn append_items_to_menu_nonbar(
+        self,
+        menu: &mut PopoverMenu,
+        handle: &WindowHandle,
+    ) {
+        let mut i = 0;
+
+        for item in self.items {
+            match item {
+                MenuItem::Entry {
+                    name,
+                    id,
+                    key,
+                    enabled,
+                } => {
+                    let item = gtk::Button::with_label(&name);
+                    item.set_sensitive(enabled);
+
+                    if let Some(k) = key {
+                        let controller = gtk::ShortcutController::new();
+                        controller.add_shortcut(&register_accelerator(&k));
+                        item.add_controller(&controller)
+                    }
+
+                    let handle = handle.clone();
+                    item.connect_activate(move |_| {
+                        if let Some(state) = handle.state.upgrade() {
+                            state.handler.borrow_mut().command(id);
+                        }
+                    });
+
+                    menu.add_child(&item,name.as_str());
+                }
+                MenuItem::SubMenu(name, submenu) => {
+                    let item = gtk::MenuButton::new();
+                    item.set_label(&name);
+                    item.set_popover(Some(&submenu.clone().into_gtk_menu(handle)));
+
+                    menu.add_child(&item,name.as_str());
+                }
+                MenuItem::Separator => {
+                    i+=1;
+                    menu.add_child(&gtk::Separator::new(gtk::Orientation::Horizontal),format!("sep{}",i).as_str());
+                },
+            }
+        }
+    }
+
+    fn append_items_to_giomenu(
+        self,
+        menu: &mut GIOMenu,
+    ) {
+        let mut i = 0;
+        for item in &self.items {
+            match item {
+                MenuItem::Entry {
+                    name,
+                    id,
+                    key,
+                    enabled,
+                } => {
+                    menu.append(Some(name.as_str()), None);
+                }
+                MenuItem::SubMenu(name, submenu) => {
+                    let mut item = GIOMenu::new();
+                    Some(&submenu.clone().append_items_to_giomenu(&mut item));
+                    menu.append_submenu(Some(name.as_str()),&item);
+                }
+                MenuItem::Separator => {
+                    i+=1;
+                    menu.append(Some(format!("sep{}",i).as_str()), None)
+                },
             }
         }
     }
@@ -123,45 +204,44 @@ impl Menu {
     pub(crate) fn into_gtk_menubar(
         self,
         handle: &WindowHandle,
-        accel_group: &AccelGroup,
-    ) -> GtkMenuBar {
-        let mut menu = GtkMenuBar::new();
+    ) -> PopoverMenuBar {
+        let mut gio_menu = GIOMenu::new();
+        self.clone().append_items_to_giomenu(&mut gio_menu);
 
-        self.append_items_to_menu(&mut menu, handle, accel_group);
+        let mut menu = PopoverMenuBar::from_model(Some(&gio_menu));
+
+        self.append_items_to_menu(&mut menu, handle);
 
         menu
     }
 
-    pub fn into_gtk_menu(self, handle: &WindowHandle, accel_group: &AccelGroup) -> GtkMenu {
-        let mut menu = GtkMenu::new();
-        menu.set_accel_group(Some(accel_group));
+    pub fn into_gtk_menu(self, handle: &WindowHandle) -> PopoverMenu {
+        let mut gio_menu = GIOMenu::new();
+        self.clone().append_items_to_giomenu(&mut gio_menu);
+        let mut menu = PopoverMenu::from_model(Some(&gio_menu));
 
-        self.append_items_to_menu(&mut menu, handle, accel_group);
+        self.append_items_to_menu_nonbar(&mut menu, handle);
 
         menu
     }
 }
 
-fn register_accelerator(item: &GtkMenuItem, accel_group: &AccelGroup, menu_key: HotKey) {
+fn register_accelerator(menu_key: &HotKey) -> gtk::Shortcut {
     let gdk_keyval = match &menu_key.key {
-        KbKey::Character(text) => text.chars().next().unwrap() as u32,
+        KbKey::Character(text) => text.chars().next().unwrap(),
         k => {
             if let Some(gdk_key) = keycodes::key_to_raw_key(k) {
-                *gdk_key
+                gdk_key.to_unicode().unwrap()
             } else {
                 tracing::warn!("Cannot map key {:?}", k);
-                return;
+                return gtk::Shortcut::new::<gtk::ShortcutTrigger,gtk::ActivateAction >(None, None);
             }
         }
     };
+    let trig = gtk::ShortcutTrigger::parse_string(format!("{}{}",modifiers_to_gdk_modifier_string(menu_key.mods),gdk_keyval).as_str()).unwrap();
+    let action = gtk::ActivateAction::get().unwrap();
 
-    item.add_accelerator(
-        "activate",
-        accel_group,
-        gdk_keyval,
-        modifiers_to_gdk_modifier_type(menu_key.mods),
-        gtk::AccelFlags::VISIBLE,
-    );
+    gtk::Shortcut::new::<gtk::ShortcutTrigger,gtk::ActivateAction >(Some(&trig), Some(&action))
 }
 
 fn modifiers_to_gdk_modifier_type(raw_modifiers: RawMods) -> gdk::ModifierType {
@@ -169,10 +249,31 @@ fn modifiers_to_gdk_modifier_type(raw_modifiers: RawMods) -> gdk::ModifierType {
 
     let modifiers: Modifiers = raw_modifiers.into();
 
-    result.set(ModifierType::MOD1_MASK, modifiers.alt());
+    result.set(ModifierType::ALT_MASK, modifiers.alt());
     result.set(ModifierType::CONTROL_MASK, modifiers.ctrl());
     result.set(ModifierType::SHIFT_MASK, modifiers.shift());
     result.set(ModifierType::META_MASK, modifiers.meta());
+
+    result
+}
+
+fn modifiers_to_gdk_modifier_string(raw_modifiers: RawMods) -> String {
+    let mut result = String::from("");
+
+    let modifiers: Modifiers = raw_modifiers.into();
+
+    if modifiers.alt(){
+        result = format!("{}{}", result, "<Alt>")
+    }
+    if modifiers.ctrl(){
+        result = format!("{}{}", result, "<Control>")
+    }
+    if modifiers.shift(){
+        result = format!("{}{}", result, "<Shift>")
+    }
+    if modifiers.meta(){
+        result = format!("{}{}", result, "<Meta>")
+    }
 
     result
 }

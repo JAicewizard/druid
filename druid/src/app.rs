@@ -260,6 +260,7 @@ impl<T: Data> AppLauncher<T> {
         }
 
         let handler = AppHandler::new(state);
+        println!("RUNNN");
         app.run(Some(Box::new(handler)));
         Ok(())
     }

@@ -56,7 +56,7 @@ use super::util;
 /// The platform target DPI.
 ///
 /// GTK considers 96 the default value which represents a 1.0 scale factor.
-const SCALE_TARGET_DPI: f64 = 96.0;
+const SCALE_TARGET_DPI: f64 = 1.0;
 
 /// Taken from https://gtk-rs.org/docs-src/tutorial/closures
 /// It is used to reduce the boilerplate of setting up gtk callbacks
@@ -280,7 +280,6 @@ impl WindowBuilder {
         window.set_default_size(size_px.width as i32, size_px.height as i32);
 
         let vbox = gtk::Box::new(gtk::Orientation::Vertical, 0);
-        window.set_child(Some(&vbox));
         let key_event_controler = gtk::EventControllerKey::new();
         let focus_event_controler = gtk::EventControllerFocus::new();
         let click_controller = gtk::GestureClick::new();
@@ -291,6 +290,17 @@ impl WindowBuilder {
         vbox.add_controller(&motion_controller);
 
         let drawing_area = gtk::DrawingArea::new();
+        drawing_area.set_hexpand(true);
+        drawing_area.set_hexpand_set(true);
+        drawing_area.set_vexpand(true);
+        drawing_area.set_vexpand_set(true);
+
+        vbox.append(&drawing_area);
+        vbox.set_hexpand(true);
+        vbox.set_hexpand_set(true);
+        vbox.set_vexpand(true);
+        vbox.set_vexpand_set(true);
+                        window.set_child(Some(&vbox));
 
         let win_state = Arc::new(WindowState {
             window,
@@ -341,25 +351,10 @@ impl WindowBuilder {
             vbox.prepend(&menu);
         }
 
-        // win_state.drawing_area.set_events(
-        //     EventMask::EXPOSURE_MASK
-        //         | EventMask::POINTER_MOTION_MASK
-        //         | EventMask::LEAVE_NOTIFY_MASK
-        //         | EventMask::BUTTON_PRESS_MASK
-        //         | EventMask::BUTTON_RELEASE_MASK
-        //         | EventMask::KEY_PRESS_MASK
-        //         | EventMask::ENTER_NOTIFY_MASK
-        //         | EventMask::KEY_RELEASE_MASK
-        //         | EventMask::SCROLL_MASK
-        //         | EventMask::SMOOTH_SCROLL_MASK
-        //         | EventMask::FOCUS_CHANGE_MASK,
-        // );
-
         win_state.drawing_area.set_can_focus(true);
         win_state.drawing_area.grab_focus();
 
 
-        // Set the minimum size
         if let Some(min_size_dp) = self.min_size {
             let min_area = ScaledArea::from_dp(min_size_dp, scale);
             let min_size_px = min_area.size_px();
@@ -368,17 +363,17 @@ impl WindowBuilder {
                 .set_size_request(min_size_px.width as i32, min_size_px.height as i32);
         }
         win_state
-            .focus_event_controler
-            .connect_enter(|focus| {
+            .motion_controller
+            .connect_enter(|focus, x, y| {
                 focus.get_widget().unwrap().grab_focus();
             });
 
-        win_state.focus_event_controler.connect_leave(
+        win_state.motion_controller.connect_leave(
             clone!(handle => move |focus| {
                 if let Some(state) = handle.state.upgrade() {
                     let scale = state.scale.get();
                     let crossing_state = focus.get_current_event_state();
-                    let point: Point = focus.get_current_event().unwrap().get_position().unwrap().into();
+                    let point: Point = (0.,0.).into();
                     let mouse_event = MouseEvent {
                         pos: point.to_dp(scale),
                         buttons: get_mouse_buttons_from_modifiers(crossing_state),
@@ -445,7 +440,7 @@ impl WindowBuilder {
                         //TODO error?
                         let mut region = cairo::Region::create();
                         for rect in invalid.rects() {
-                            println!("rect!");
+                            println!("rect!{:?}",rect);
                             let rect = rect.to_px(scale);
                             let rect1  = cairo::RectangleInt{x:rect.x0 as i32,y:rect.y0 as i32,width:rect.width() as i32,height:rect.height() as i32};
                             region.union_rectangle(&rect1);
@@ -462,28 +457,26 @@ impl WindowBuilder {
 
                         let c_context = surface.create_cairo_context().unwrap();
                         c_context.begin_frame(&region);
-                        let surface_context = c_context.cairo_create().unwrap();
+                        //let surface_context = c_context.cairo_create().unwrap();
 
                         // Clip to the invalid region, in order that our surface doesn't get
                         // messed up if there's any painting outside them.
                         for rect in invalid.rects() {
                             let rect = rect.to_px(scale);
-                            surface_context.rectangle(rect.x0, rect.y0, rect.width(), rect.height());
+                            context.rectangle(rect.x0, rect.y0, rect.width(), rect.height());
                         }
-                        surface_context.clip();
+                        context.clip();
 
-                        surface_context.scale(scale.x(), scale.y());
-                        let mut piet_context = Piet::new(&surface_context);
+                        context.scale(scale.x(), scale.y());
+                        let mut piet_context = Piet::new(&context);
                         handler.paint(&mut piet_context, &invalid);
                         if let Err(e) = piet_context.finish() {
                             error!("piet error on render: {:?}", e);
                         }
 
-                        // Copy the entire surface to the drawing area (not just the invalid
+                        // Copy the entir`e surface to the drawing area (not just the invalid
                         // region, because there might be parts of the drawing area that were
                         // invalidated by external forces).
-                        context.rectangle(0.0, 0.0, width as f64, height as f64);
-                        context.fill();
                         c_context.end_frame();
 
                     });
@@ -662,23 +655,21 @@ impl WindowBuilder {
                     );
                 }
             }));
-        // win_state
-        //     .drawing_area
-        //     .connect_focus_in_event(clone!(handle => move |_widget, _event| {
-        //         if let Some(state) = handle.state.upgrade() {
-        //             state.with_handler(|h| h.got_focus());
-        //         }
-        //         Inhibit(true)
-        //     }));
+        win_state
+            .focus_event_controler
+            .connect_enter(clone!(handle => move |_focus| {
+                if let Some(state) = handle.state.upgrade() {
+                    state.with_handler(|h| h.got_focus());
+                }
+            }));
 
-        // win_state
-        //     .drawing_area
-        //     .connect_focus_out_event(clone!(handle => move |_widget, _event| {
-        //         if let Some(state) = handle.state.upgrade() {
-        //             state.with_handler(|h| h.lost_focus());
-        //         }
-        //         Inhibit(true)
-        //     }));
+        win_state
+            .focus_event_controler
+            .connect_leave(clone!(handle => move |_focus| {
+                if let Some(state) = handle.state.upgrade() {
+                    state.with_handler(|h| h.lost_focus());
+                }
+            }));
 
         // win_state
         //     .window
@@ -699,20 +690,19 @@ impl WindowBuilder {
         //         }
         //     }));
 
-        vbox.append(&win_state.drawing_area);
-        win_state.drawing_area.realize();
+        // win_state.drawing_area.realize();
         // win_state
         //     .drawing_area
         //     .get_window()
         //     .expect("realize didn't create window")
         //     .set_event_compression(false);
 
-        // let size = self.size;
-        // win_state.with_handler(|h| {
-        //     h.connect(&handle.clone().into());
-        //     h.scale(scale);
-        //     h.size(size);
-        // });
+        let size = self.size;
+        win_state.with_handler(|h| {
+            h.connect(&handle.clone().into());
+            h.scale(scale);
+            h.size(size);
+        });
         win_state.window.show();
         Ok(handle)
     }

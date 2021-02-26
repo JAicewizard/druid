@@ -39,6 +39,7 @@ impl Widget<()> for AnimWidget {
                 ctx.request_anim_frame();
             }
             Event::AnimFrame(interval) => {
+                panic!("fds");
                 ctx.request_paint();
                 self.t += (*interval as f64) * 1e-9;
                 if self.t < 1.0 {

@@ -1139,6 +1139,7 @@ impl WidgetState {
 
         self.needs_layout |= child_state.needs_layout;
         self.request_anim |= child_state.request_anim;
+        println!("request_anim!!");
         self.has_active |= child_state.has_active;
         self.has_focus |= child_state.has_focus;
         self.children_changed |= child_state.children_changed;

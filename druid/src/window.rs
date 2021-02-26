@@ -93,6 +93,7 @@ impl<T> Window<T> {
 impl<T: Data> Window<T> {
     /// `true` iff any child requested an animation frame since the last `AnimFrame` event.
     pub(crate) fn wants_animation_frame(&self) -> bool {
+        println!("woao");
         self.root.state().request_anim
     }
 
@@ -366,7 +367,7 @@ impl<T: Data> Window<T> {
         if self.root.state().needs_layout {
             self.layout(queue, data, env);
         }
-
+        println!("PAINT!!!");
         piet.fill(
             invalid.bounding_box(),
             &(if self.transparent {

@@ -65,6 +65,7 @@ impl Application {
     pub fn run(self, _handler: Option<Box<dyn AppHandler>>) {
         println!("SDKFLSD");
         self.gtk_app.run(&[]);
+        println!("SDKFLSD2");
     }
 
     pub fn quit(&self) {

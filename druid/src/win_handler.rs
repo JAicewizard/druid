@@ -106,6 +106,7 @@ struct Windows<T> {
 
 impl<T> Windows<T> {
     fn connect(&mut self, id: WindowId, handle: WindowHandle, ext_handle: ExtEventSink) {
+        println!("CON{:?}", id);
         if let Some(pending) = self.pending.remove(&id) {
             let win = Window::new(id, handle, pending, ext_handle);
             assert!(self.windows.insert(id, win).is_none(), "duplicate window");
@@ -115,6 +116,8 @@ impl<T> Windows<T> {
     }
 
     fn add(&mut self, id: WindowId, win: PendingWindow<T>) {
+        println!("ADD{:?}", id);
+
         assert!(self.pending.insert(id, win).is_none(), "duplicate pending");
     }
 
@@ -131,6 +134,8 @@ impl<T> Windows<T> {
     }
 
     fn get_mut(&mut self, id: WindowId) -> Option<&mut Window<T>> {
+        println!("getMuT: {:?}", self.windows.keys());
+        println!("getMuT: {:?}", self.pending.keys());
         self.windows.get_mut(&id)
     }
 
@@ -325,6 +330,7 @@ impl<T: Data> Inner<T> {
     }
 
     fn paint(&mut self, window_id: WindowId, piet: &mut Piet, invalid: &Region) {
+        println!("ksfjn");
         if let Some(win) = self.windows.get_mut(window_id) {
             win.do_paint(
                 piet,
@@ -545,6 +551,7 @@ impl<T: Data> AppState<T> {
     }
 
     fn paint_window(&mut self, window_id: WindowId, piet: &mut Piet, invalid: &Region) {
+        println!("dsfk");
         self.inner.borrow_mut().paint(window_id, piet, invalid);
     }
 
